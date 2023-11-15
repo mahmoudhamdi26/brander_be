@@ -1,0 +1,21 @@
+@hostname = localhost
+@port = 8080
+@host = http://{{hostname}}:{{port}}
+@url = {{host}}/api/v1
+@contentType = application/json
+@createdAt = {{$datetime iso8601}}
+@modifiedBy = {{$processEnv USERNAME}}
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdHJpbmciLCJpYXQiOjE2OTk4OTIxNDMsImV4cCI6MTY5OTg5MzU4M30.wjdcUB7xL287BPRJKqz8nnMUtZg5dd75cpkoaoVi_Os
+
+####
+POST {{url}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "username": "String",
+    "password": "String"
+}
+
+###
+GET {{url}}/users
+Authorization: Bearer {{token}}

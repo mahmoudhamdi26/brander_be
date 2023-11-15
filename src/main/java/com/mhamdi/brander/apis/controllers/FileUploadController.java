@@ -2,7 +2,6 @@ package com.mhamdi.brander.apis.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.mhamdi.brander.services.global.StorageFileNotFoundException;
-import com.mhamdi.brander.services.global.StorageService;
-import com.mhamdi.core.SVGHandler;
-
-import org.springframework.stereotype.Controller;
+import com.mhamdi.core.global.storage.StorageFileNotFoundException;
+import com.mhamdi.core.svg.SVGHandler;
+import com.mhamdi.brander.services.intrfaces.StorageService;
 
 @Controller
 public class FileUploadController {

@@ -1,4 +1,4 @@
-package com.mhamdi.brander.services;
+package com.mhamdi.brander.services.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,20 +8,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import com.mhamdi.brander.services.intrfaces.StorageService;
+import com.mhamdi.core.global.storage.StorageException;
+import com.mhamdi.core.global.storage.StorageFileNotFoundException;
+import com.mhamdi.core.global.storage.StorageProperties;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.mhamdi.brander.services.global.StorageException;
-import com.mhamdi.brander.services.global.StorageFileNotFoundException;
-import com.mhamdi.brander.services.global.StorageProperties;
-import com.mhamdi.brander.services.global.StorageService;
 
 @Service
 public class FileSystemStorageService implements StorageService {
@@ -31,7 +32,7 @@ public class FileSystemStorageService implements StorageService {
 	public FileSystemStorageService(StorageProperties properties) {
         
         if(properties.getLocation().trim().length() == 0){
-            throw new StorageException("File upload location can not be Empty."); 
+            throw new StorageException("File upload location can not be Empty.");
         }
 
 		this.rootLocation = Paths.get(properties.getLocation());
@@ -54,6 +55,35 @@ public class FileSystemStorageService implements StorageService {
 			try (InputStream inputStream = file.getInputStream()) {
 				Files.copy(inputStream, destinationFile,
 					StandardCopyOption.REPLACE_EXISTING);
+			}
+		}
+		catch (IOException e) {
+			throw new StorageException("Failed to store file.", e);
+		}
+	}
+
+	@Override
+	public File save(MultipartFile file) {
+		try {
+			if (file.isEmpty()) {
+				throw new StorageException("Failed to store empty file.");
+			}
+			UUID fileid = UUID.randomUUID();
+			String ext = FilenameUtils.getExtension(file.getOriginalFilename());	
+			String fileNameWithextension = fileid.toString() + '.' + ext;		
+			Path destinationFile = this.rootLocation
+				// .resolve(Paths.get(file.getOriginalFilename()))
+				.resolve( fileNameWithextension )
+				.normalize().toAbsolutePath();
+			if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+				// This is a security check
+				throw new StorageException(
+						"Cannot store file outside current directory.");
+			}
+			try (InputStream inputStream = file.getInputStream()) {
+				Files.copy(inputStream, destinationFile,
+					StandardCopyOption.REPLACE_EXISTING);
+				return this.rootLocation.resolve( fileNameWithextension ).toFile();
 			}
 		}
 		catch (IOException e) {

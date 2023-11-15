@@ -1,4 +1,4 @@
-package com.mhamdi.core;
+package com.mhamdi.core.svg;
 
 // Import the necessary classes and packages
 import java.io.File;
@@ -48,7 +48,7 @@ public class SVGHandler {
           Element root = doc.getDocumentElement();
           
           // Get all the elements with tag name "g", which are groups of elements that can be considered as layers
-          NodeList layers = root.getElementsByTagName("g");
+          NodeList layers = root.getElementsByTagName("text");
           
           // Loop through the layers and print their id attributes, which are their names
           for (int i = 0; i < layers.getLength(); i++) {

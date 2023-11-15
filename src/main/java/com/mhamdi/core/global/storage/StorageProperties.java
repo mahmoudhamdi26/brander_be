@@ -1,4 +1,4 @@
-package com.mhamdi.brander.services.global;
+package com.mhamdi.core.global.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

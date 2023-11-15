@@ -1,4 +1,4 @@
-package com.mhamdi.brander.services.global;
+package com.mhamdi.core.global.storage;
 
 public class StorageFileNotFoundException extends StorageException {
     public StorageFileNotFoundException(String message) {
