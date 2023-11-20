@@ -1,40 +1,28 @@
 package com.mhamdi.db.models;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import com.mhamdi.db.models.keys.UserTemplateCompositeKey;
+import java.io.Serializable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
-@Data
 @Builder
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 @Entity
 @Table(name = "users_templates")
-public class UserTemplates {
-    // @EmbeddedId
-    // UserTemplateCompositeKey id;
-    @Id     
+public class UserTemplates implements Serializable {
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, columnDefinition = "NUMERIC(19,0)")
+    @Column(name = "id", nullable = false)
     Long id;
 
-    @ManyToOne
-    @MapsId("userId")
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     User user;
 
     @ManyToOne
-    @MapsId("templateId")
     @JoinColumn(name = "template_id")
     Template template;
 

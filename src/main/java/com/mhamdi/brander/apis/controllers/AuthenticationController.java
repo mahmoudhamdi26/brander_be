@@ -24,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) {
         try{
             JwtAuthenticationResponse res = authenticationService.signup(request);
@@ -41,6 +41,7 @@ public class AuthenticationController {
             AppResponse res = authenticationService.signin(request);
             return ResponseEntity.ok(res);
         }catch (RuntimeException ex){
+            ex.printStackTrace();
             throw new ApplicationException(Errors.USER_NOT_FOUND, Map.of("username", request.getUsername()));
         }
     }

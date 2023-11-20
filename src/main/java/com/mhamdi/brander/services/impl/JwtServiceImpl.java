@@ -25,10 +25,10 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String extractUserName(String token) {
         try {
-            return extractClaim(token, Claims::getSubject);   
+            return extractClaim(token, Claims::getSubject);
         } catch (Exception e) {
             return null;
-        }        
+        }
     }
 
     @Override

@@ -26,9 +26,8 @@ import com.mhamdi.brander.services.intrfaces.StorageService;
 
 @Controller
 public class FileUploadController {
-    private final StorageService storageService;
+	private final StorageService storageService;
 
-	@Autowired
 	public FileUploadController(StorageService storageService) {
 		this.storageService = storageService;
 	}
@@ -59,17 +58,17 @@ public class FileUploadController {
 
 	@PostMapping("/")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file,
-            @RequestParam("txt") String txt,
-			RedirectAttributes redirectAttributes) {                
+			@RequestParam("txt") String txt,
+			RedirectAttributes redirectAttributes) {
 
 		storageService.store(file);
 		redirectAttributes.addFlashAttribute("message",
 				"You successfully uploaded " + file.getOriginalFilename() + "!");
-        File uploadedFile = storageService.getFile(file.getOriginalFilename());
-        File modifiedFile = storageService.getFile("edited_" + file.getOriginalFilename());
+		File uploadedFile = storageService.getFile(file.getOriginalFilename());
+		File modifiedFile = storageService.getFile("edited_" + file.getOriginalFilename());
 
-        SVGHandler svg = new SVGHandler();        
-        svg.changeTextLayer(uploadedFile.getAbsolutePath(), modifiedFile.getAbsolutePath(),  "Layer_3", txt);
+		SVGHandler svg = new SVGHandler();
+		svg.changeTextLayer(uploadedFile.getAbsolutePath(), modifiedFile.getAbsolutePath(), "Layer_3", txt);
 
 		return "redirect:/";
 	}

@@ -6,6 +6,8 @@ import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,10 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,25 +38,59 @@ public class GlobalExceptionHandler { //extends DefaultErrorAttributes {
     }
 
 
-//    @ExceptionHandler(ApplicationException.class)
-//    public ResponseEntity<Map<String, Object>> handle(ApplicationException ex,
-//                                                      WebRequest request) {
-//        log.info("Required request body is missing {}", ex.getMessage());
-//        return ofType(request, ex.getErrorResponse().getHttpStatus(), ex);
-//    }
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<Map<String, Object>> handleException(ApplicationException ex,
+                                                               WebRequest request) {
+        log.error("Application exception occurred {}", ex.getMessage());
+        ex.printStackTrace();
+        return createResponse(request, ex.getErrorResponse().getHttpStatus(), ex.getMessage(), null, null);
+    }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public final ResponseEntity<Map<String, Object>> handle(
-//            MethodArgumentNotValidException ex,
-//            WebRequest request) {
-//        List<ConstraintsViolationError> validationErrors = ex.getBindingResult()
-//                .getFieldErrors()
-//                .stream()
-//                .map(error -> new ConstraintsViolationError(error.getField(), error.getDefaultMessage()))
-//                .collect(Collectors.toList());
-//
-//        return ofType(request, HttpStatus.BAD_REQUEST, ex.getMessage(), null, validationErrors);
-//    }
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleException(
+            MethodArgumentNotValidException ex,
+            WebRequest request) {
+        log.error("Validation error occurred {}", ex.getMessage());
+        List<ConstraintsViolationError> validationErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> new ConstraintsViolationError(error.getField(), error.getDefaultMessage()))
+                .collect(Collectors.toList());
+
+        return createResponse(request, HttpStatus.BAD_REQUEST, ex.getMessage(), null, validationErrors);
+    }
+
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @ExceptionHandler(jakarta.servlet.ServletException.class)
+    public ResponseEntity<Map<String, Object>> handleException(jakarta.servlet.ServletException ex,
+                                                               WebRequest request) {
+        log.error("Application exception occurred {}", ex.getMessage());
+        return createResponse(request, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), null, null);
+    }
+
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleException(org.springframework.dao.DataIntegrityViolationException ex,
+                                                               WebRequest request) {
+        log.error("Application exception occurred {}", ex.getMessage());
+        return createResponse(request, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), null, null);
+    }
+
+    private ResponseEntity<Map<String, Object>> createResponse(WebRequest request, HttpStatus status, String message, Object data, List<ConstraintsViolationError> errors) {
+        // create a map to store the response information
+        Map<String, Object> map = new HashMap<>();
+        // put the status, message, data, errors, timestamp, and path to the map
+        map.put("status", status.value());
+        map.put("message", message);
+        map.put("data", data);
+        map.put("errors", errors);
+        map.put("timestamp", new Date());
+        map.put("path", request.getDescription(false));
+        // create and return the ResponseEntity object with the given status and body
+        return ResponseEntity.status(status).body(map);
+    }
 
     // You can define methods to handle specific exceptions, such as AuthenticationException or AccessDeniedException
     @ExceptionHandler(value = {AuthenticationException.class})

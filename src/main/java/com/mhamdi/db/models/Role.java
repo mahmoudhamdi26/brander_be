@@ -1,5 +1,6 @@
 package com.mhamdi.db.models;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -7,7 +8,7 @@ import lombok.*;
 
 @Entity
 @Table(name="roles")
-public class Role {
+public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

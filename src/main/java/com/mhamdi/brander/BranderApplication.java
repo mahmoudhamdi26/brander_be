@@ -43,8 +43,8 @@ public class BranderApplication {
 				registry.addMapping("/api/**")
 				.allowedHeaders("*")
                 .allowedOrigins("*")
-				.maxAge(10);
-                // .allowedMethods("get", "post", "put", "delete", "options");
+				.maxAge(10)
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
                 // .allowCredentials(true);
                 // .maxAge(3600)
 				// .allowedOrigins("http://localhost:9000");

@@ -44,8 +44,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AppResponse signin(LoginRequest request) throws RuntimeException{
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new ApplicationException(Errors.USER_NOT_FOUND, Map.of("id", request.getUsername())));
         var jwt = jwtService.generateToken(user);

@@ -16,6 +16,16 @@ Content-Type: {{contentType}}
     "password": "String"
 }
 
+
+####
+POST {{url}}/auth/register
+Content-Type: {{contentType}}
+
+{
+    "name":"Mahmoud",
+    "username": "String",
+    "password": "String"
+}
 ###
 GET {{url}}/users
 Authorization: Bearer {{token}}

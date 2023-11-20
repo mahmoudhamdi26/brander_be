@@ -17,6 +17,12 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
@@ -29,7 +35,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.28</version>
+			<version>1.18.30</version>			
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -62,10 +68,10 @@
 		</dependency>
 
 
-<!--		<dependency>-->
-<!--			<groupId>org.flywaydb</groupId>-->
-<!--			<artifactId>flyway-core</artifactId>-->
-<!--		</dependency>-->
+		<!-- <dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -84,7 +90,7 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-all</artifactId>
-			<version>1.16</version>
+			<version>1.17</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudconvert</groupId>
@@ -100,7 +106,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.10.0</version>
+			<version>1.11.0</version>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
@@ -140,6 +146,24 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>					
+				<artifactId>maven-compiler-plugin</artifactId>					
+				<configuration>						
+					<annotationProcessorPaths>							
+						<path>								
+							<groupId>org.projectlombok</groupId>								
+							<artifactId>lombok</artifactId>								
+							<version>${lombok.version}</version>							
+						</path>						
+					</annotationProcessorPaths>
+						
+					<compilerArguments>
+						<Xlint argument="missing.lombok.annotation"/>
+						<Xlint argument="log.invalid.usage"/>
+					</compilerArguments>
+				</configuration>
 			</plugin>
 <!--			<plugin>-->
 <!--				<groupId>org.flywaydb</groupId>-->

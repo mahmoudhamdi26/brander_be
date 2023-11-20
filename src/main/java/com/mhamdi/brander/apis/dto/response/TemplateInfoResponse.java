@@ -2,6 +2,7 @@ package com.mhamdi.brander.apis.dto.response;
 
 import java.util.Vector;
 
+import com.mhamdi.brander.apis.dto.response.DataInterface;
 import lombok.Builder;
 import lombok.Data;
 
