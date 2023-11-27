@@ -67,14 +67,30 @@ public class TemplatesController {
     }
 
     @GetMapping("api/v1/templates/info/{id}")
-    AppResponse getInfo(@RequestParam("id") Long id) {
+    AppResponse getInfo(@PathVariable("id") Long id) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         Template template = repository.findById(id).get();
         File templateFile = storageService.getFile(template.getFileid());
+        MHsvg svg = new MHsvg(templateFile);
+        var layers = svg.listSvgLayers();
 
+        TemplateInfoResponse data = TemplateInfoResponse.builder()
+                .template_id(template.getId())
+                .layers(layers).build();
+        var res = AppResponse.builder().data(data).status(1).message("success").build();
+        return res;
+    }
+
+    @GetMapping("api/v1/templates/open/{fid}")
+    AppResponse openTemplateFile(@PathVariable String fid) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        File templateFile = storageService.getFile(fid);
         MHsvg svg = new MHsvg(templateFile);
         var layers = svg.listSvgLayers();
 

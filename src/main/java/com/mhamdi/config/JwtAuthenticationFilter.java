@@ -40,30 +40,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+            @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        String reqPath = request.getRequestURL().toString();            
-        if(!reqPath.contains("/api/")){
+        String reqPath = request.getRequestURL().toString();
+        if (!reqPath.contains("/api/")) {
             filterChain.doFilter(request, response);
-            return;    
+            return;
         }
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userEmail;        
-        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer")) {                        
-            if(reqPath.contains("/auth/login") || reqPath.contains("/auth/register")){
+        final String userEmail;
+        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer")) {
+            if (reqPath.contains("/auth/login") || reqPath.contains("/auth/register") ||
+                    reqPath.contains("/files/download/")) {
                 filterChain.doFilter(request, response);
-                return;    
+                return;
             }
-           Map<String, Object> errorDetails = new HashMap<>();
-           errorDetails.put("status", 401);
-           errorDetails.put("message", "Unauthorized");
-           errorDetails.put("errorCode", "USER_NOT_FOUND");
-           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-           response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-           ObjectMapper mapper = new ObjectMapper();
-           mapper.writeValue(response.getWriter(), errorDetails);
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("status", 401);
+            errorDetails.put("message", "Unauthorized");
+            errorDetails.put("errorCode", "USER_NOT_FOUND");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getWriter(), errorDetails);
             // filterChain.doFilter(request, response);
             // return;
         }
@@ -80,15 +81,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
                 filterChain.doFilter(request, response);
-            }else{
+            } else {
                 writeError(response);
-            }            
-        }else{
+            }
+        } else {
             writeError(response);
         }
     }
 
-    private void writeError(HttpServletResponse response) throws StreamWriteException, DatabindException, IOException{
+    private void writeError(HttpServletResponse response) throws StreamWriteException, DatabindException, IOException {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("status", 401);
         errorDetails.put("message", "Unauthorized");
@@ -97,5 +98,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getWriter(), errorDetails);
-    } 
+    }
 }

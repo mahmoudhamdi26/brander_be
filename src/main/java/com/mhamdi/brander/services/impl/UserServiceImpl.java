@@ -88,12 +88,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> allUsers() {
         List<User> items = repository.findAll();
-        return  items;
+        return items;
     }
-    
+
     @Override
     public UserInfo getUserInfo(Long id) {
-        var user  = repository.findById(id).orElseThrow(() -> new ApplicationException(Errors.USER_NOT_FOUND, Map.of("id", id)));
+        var user = repository.findById(id)
+                .orElseThrow(() -> new ApplicationException(Errors.USER_NOT_FOUND, Map.of("id", id)));
         UserInfo result = new UserInfo();
         result.setEmail(user.getEmail());
         result.setUsername(user.getUsername());
@@ -103,5 +104,4 @@ public class UserServiceImpl implements UserService {
 
         return result;
     }
-
 }

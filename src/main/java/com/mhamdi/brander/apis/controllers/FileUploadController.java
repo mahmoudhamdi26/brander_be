@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import com.mhamdi.core.svg.SVGHandler;
 import com.mhamdi.brander.services.intrfaces.StorageService;
 
 @Controller
+@RequestMapping("/api/v1")
 public class FileUploadController {
 	private final StorageService storageService;
 
@@ -46,6 +48,19 @@ public class FileUploadController {
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+
+		Resource file = storageService.loadAsResource(filename);
+
+		if (file == null)
+			return ResponseEntity.notFound().build();
+
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
+	}
+
+	@GetMapping("/files/download/{filename:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> DownloadFile(@PathVariable String filename) {
 
 		Resource file = storageService.loadAsResource(filename);
 

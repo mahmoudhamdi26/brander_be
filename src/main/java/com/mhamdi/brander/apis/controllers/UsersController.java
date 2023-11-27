@@ -81,4 +81,5 @@ class UsersController {
         userService.getRepository().deleteById(id);
         return AppResponse.builder().status(1).message("success").build();
     }
+
 }
